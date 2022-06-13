@@ -1161,6 +1161,7 @@ dependencies = [
  "evm",
  "eyre",
  "hex",
+ "microbench",
  "primitive-types",
  "tokio",
 ]
@@ -1826,6 +1827,12 @@ checksum = "5aa361d4faea93603064a027415f07bd8e1d5c88c9fbf68bf56a285428fd79ce"
 dependencies = [
  "autocfg",
 ]
+
+[[package]]
+name = "microbench"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c4c44e40aee4e6fd2f4257bb91e5948ce79285aeb949129448889cf2fbf6da0b"
 
 [[package]]
 name = "mime"
