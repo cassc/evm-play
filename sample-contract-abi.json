@@ -1,0 +1,670 @@
+{
+    constructor: Some(
+        Constructor {
+            inputs: [],
+        },
+    ),
+    functions: {
+        "INITIAL_SUPPLY": [
+            Function {
+                name: "INITIAL_SUPPLY",
+                inputs: [],
+                outputs: [
+                    Param {
+                        name: "",
+                        kind: Uint(
+                            256,
+                        ),
+                        internal_type: None,
+                    },
+                ],
+                constant: Some(
+                    true,
+                ),
+                state_mutability: View,
+            },
+        ],
+        "allowance": [
+            Function {
+                name: "allowance",
+                inputs: [
+                    Param {
+                        name: "_owner",
+                        kind: Address,
+                        internal_type: None,
+                    },
+                    Param {
+                        name: "_spender",
+                        kind: Address,
+                        internal_type: None,
+                    },
+                ],
+                outputs: [
+                    Param {
+                        name: "",
+                        kind: Uint(
+                            256,
+                        ),
+                        internal_type: None,
+                    },
+                ],
+                constant: Some(
+                    true,
+                ),
+                state_mutability: View,
+            },
+        ],
+        "approve": [
+            Function {
+                name: "approve",
+                inputs: [
+                    Param {
+                        name: "_spender",
+                        kind: Address,
+                        internal_type: None,
+                    },
+                    Param {
+                        name: "_value",
+                        kind: Uint(
+                            256,
+                        ),
+                        internal_type: None,
+                    },
+                ],
+                outputs: [
+                    Param {
+                        name: "",
+                        kind: Bool,
+                        internal_type: None,
+                    },
+                ],
+                constant: Some(
+                    false,
+                ),
+                state_mutability: NonPayable,
+            },
+        ],
+        "b_0": [
+            Function {
+                name: "b_0",
+                inputs: [],
+                outputs: [
+                    Param {
+                        name: "",
+                        kind: Uint(
+                            256,
+                        ),
+                        internal_type: None,
+                    },
+                ],
+                constant: Some(
+                    true,
+                ),
+                state_mutability: View,
+            },
+        ],
+        "b_1": [
+            Function {
+                name: "b_1",
+                inputs: [],
+                outputs: [
+                    Param {
+                        name: "",
+                        kind: Bool,
+                        internal_type: None,
+                    },
+                ],
+                constant: Some(
+                    true,
+                ),
+                state_mutability: View,
+            },
+        ],
+        "b_2": [
+            Function {
+                name: "b_2",
+                inputs: [],
+                outputs: [
+                    Param {
+                        name: "",
+                        kind: Address,
+                        internal_type: None,
+                    },
+                ],
+                constant: Some(
+                    true,
+                ),
+                state_mutability: View,
+            },
+        ],
+        "b_3": [
+            Function {
+                name: "b_3",
+                inputs: [],
+                outputs: [
+                    Param {
+                        name: "",
+                        kind: FixedBytes(
+                            32,
+                        ),
+                        internal_type: None,
+                    },
+                ],
+                constant: Some(
+                    true,
+                ),
+                state_mutability: View,
+            },
+        ],
+        "b_4": [
+            Function {
+                name: "b_4",
+                inputs: [],
+                outputs: [
+                    Param {
+                        name: "",
+                        kind: Uint(
+                            8,
+                        ),
+                        internal_type: None,
+                    },
+                ],
+                constant: Some(
+                    true,
+                ),
+                state_mutability: View,
+            },
+        ],
+        "b_5": [
+            Function {
+                name: "b_5",
+                inputs: [
+                    Param {
+                        name: "",
+                        kind: Uint(
+                            256,
+                        ),
+                        internal_type: None,
+                    },
+                ],
+                outputs: [
+                    Param {
+                        name: "data",
+                        kind: FixedBytes(
+                            32,
+                        ),
+                        internal_type: None,
+                    },
+                    Param {
+                        name: "callback",
+                        kind: Uint(
+                            8,
+                        ),
+                        internal_type: None,
+                    },
+                ],
+                constant: Some(
+                    true,
+                ),
+                state_mutability: View,
+            },
+        ],
+        "balanceOf": [
+            Function {
+                name: "balanceOf",
+                inputs: [
+                    Param {
+                        name: "_owner",
+                        kind: Address,
+                        internal_type: None,
+                    },
+                ],
+                outputs: [
+                    Param {
+                        name: "",
+                        kind: Uint(
+                            256,
+                        ),
+                        internal_type: None,
+                    },
+                ],
+                constant: Some(
+                    true,
+                ),
+                state_mutability: View,
+            },
+        ],
+        "c_0": [
+            Function {
+                name: "c_0",
+                inputs: [],
+                outputs: [
+                    Param {
+                        name: "",
+                        kind: Uint(
+                            256,
+                        ),
+                        internal_type: None,
+                    },
+                ],
+                constant: Some(
+                    true,
+                ),
+                state_mutability: View,
+            },
+        ],
+        "c_1": [
+            Function {
+                name: "c_1",
+                inputs: [],
+                outputs: [
+                    Param {
+                        name: "",
+                        kind: Bool,
+                        internal_type: None,
+                    },
+                ],
+                constant: Some(
+                    true,
+                ),
+                state_mutability: View,
+            },
+        ],
+        "c_2": [
+            Function {
+                name: "c_2",
+                inputs: [],
+                outputs: [
+                    Param {
+                        name: "",
+                        kind: Address,
+                        internal_type: None,
+                    },
+                ],
+                constant: Some(
+                    true,
+                ),
+                state_mutability: View,
+            },
+        ],
+        "c_3": [
+            Function {
+                name: "c_3",
+                inputs: [],
+                outputs: [
+                    Param {
+                        name: "",
+                        kind: FixedBytes(
+                            32,
+                        ),
+                        internal_type: None,
+                    },
+                ],
+                constant: Some(
+                    true,
+                ),
+                state_mutability: View,
+            },
+        ],
+        "c_4": [
+            Function {
+                name: "c_4",
+                inputs: [],
+                outputs: [
+                    Param {
+                        name: "",
+                        kind: Uint(
+                            8,
+                        ),
+                        internal_type: None,
+                    },
+                ],
+                constant: Some(
+                    true,
+                ),
+                state_mutability: View,
+            },
+        ],
+        "c_5": [
+            Function {
+                name: "c_5",
+                inputs: [
+                    Param {
+                        name: "",
+                        kind: Uint(
+                            256,
+                        ),
+                        internal_type: None,
+                    },
+                ],
+                outputs: [
+                    Param {
+                        name: "data",
+                        kind: FixedBytes(
+                            32,
+                        ),
+                        internal_type: None,
+                    },
+                    Param {
+                        name: "callback",
+                        kind: Uint(
+                            8,
+                        ),
+                        internal_type: None,
+                    },
+                ],
+                constant: Some(
+                    true,
+                ),
+                state_mutability: View,
+            },
+        ],
+        "decimals": [
+            Function {
+                name: "decimals",
+                inputs: [],
+                outputs: [
+                    Param {
+                        name: "",
+                        kind: Uint(
+                            8,
+                        ),
+                        internal_type: None,
+                    },
+                ],
+                constant: Some(
+                    true,
+                ),
+                state_mutability: View,
+            },
+        ],
+        "decreaseApproval": [
+            Function {
+                name: "decreaseApproval",
+                inputs: [
+                    Param {
+                        name: "_spender",
+                        kind: Address,
+                        internal_type: None,
+                    },
+                    Param {
+                        name: "_subtractedValue",
+                        kind: Uint(
+                            256,
+                        ),
+                        internal_type: None,
+                    },
+                ],
+                outputs: [
+                    Param {
+                        name: "",
+                        kind: Bool,
+                        internal_type: None,
+                    },
+                ],
+                constant: Some(
+                    false,
+                ),
+                state_mutability: NonPayable,
+            },
+        ],
+        "increaseApproval": [
+            Function {
+                name: "increaseApproval",
+                inputs: [
+                    Param {
+                        name: "_spender",
+                        kind: Address,
+                        internal_type: None,
+                    },
+                    Param {
+                        name: "_addedValue",
+                        kind: Uint(
+                            256,
+                        ),
+                        internal_type: None,
+                    },
+                ],
+                outputs: [
+                    Param {
+                        name: "",
+                        kind: Bool,
+                        internal_type: None,
+                    },
+                ],
+                constant: Some(
+                    false,
+                ),
+                state_mutability: NonPayable,
+            },
+        ],
+        "name": [
+            Function {
+                name: "name",
+                inputs: [],
+                outputs: [
+                    Param {
+                        name: "",
+                        kind: String,
+                        internal_type: None,
+                    },
+                ],
+                constant: Some(
+                    true,
+                ),
+                state_mutability: View,
+            },
+        ],
+        "predict": [
+            Function {
+                name: "predict",
+                inputs: [],
+                outputs: [
+                    Param {
+                        name: "",
+                        kind: Uint(
+                            256,
+                        ),
+                        internal_type: None,
+                    },
+                ],
+                constant: Some(
+                    false,
+                ),
+                state_mutability: NonPayable,
+            },
+        ],
+        "setVal": [
+            Function {
+                name: "setVal",
+                inputs: [
+                    Param {
+                        name: "val",
+                        kind: Uint(
+                            256,
+                        ),
+                        internal_type: None,
+                    },
+                ],
+                outputs: [],
+                constant: Some(
+                    false,
+                ),
+                state_mutability: NonPayable,
+            },
+        ],
+        "symbol": [
+            Function {
+                name: "symbol",
+                inputs: [],
+                outputs: [
+                    Param {
+                        name: "",
+                        kind: String,
+                        internal_type: None,
+                    },
+                ],
+                constant: Some(
+                    true,
+                ),
+                state_mutability: View,
+            },
+        ],
+        "tap": [
+            Function {
+                name: "tap",
+                inputs: [
+                    Param {
+                        name: "a_address",
+                        kind: Address,
+                        internal_type: None,
+                    },
+                ],
+                outputs: [],
+                constant: Some(
+                    false,
+                ),
+                state_mutability: NonPayable,
+            },
+        ],
+        "totalSupply": [
+            Function {
+                name: "totalSupply",
+                inputs: [],
+                outputs: [
+                    Param {
+                        name: "",
+                        kind: Uint(
+                            256,
+                        ),
+                        internal_type: None,
+                    },
+                ],
+                constant: Some(
+                    true,
+                ),
+                state_mutability: View,
+            },
+        ],
+        "transfer": [
+            Function {
+                name: "transfer",
+                inputs: [
+                    Param {
+                        name: "_to",
+                        kind: Address,
+                        internal_type: None,
+                    },
+                    Param {
+                        name: "_value",
+                        kind: Uint(
+                            256,
+                        ),
+                        internal_type: None,
+                    },
+                ],
+                outputs: [
+                    Param {
+                        name: "",
+                        kind: Bool,
+                        internal_type: None,
+                    },
+                ],
+                constant: Some(
+                    false,
+                ),
+                state_mutability: NonPayable,
+            },
+        ],
+        "transferFrom": [
+            Function {
+                name: "transferFrom",
+                inputs: [
+                    Param {
+                        name: "_from",
+                        kind: Address,
+                        internal_type: None,
+                    },
+                    Param {
+                        name: "_to",
+                        kind: Address,
+                        internal_type: None,
+                    },
+                    Param {
+                        name: "_value",
+                        kind: Uint(
+                            256,
+                        ),
+                        internal_type: None,
+                    },
+                ],
+                outputs: [
+                    Param {
+                        name: "",
+                        kind: Bool,
+                        internal_type: None,
+                    },
+                ],
+                constant: Some(
+                    false,
+                ),
+                state_mutability: NonPayable,
+            },
+        ],
+    },
+    events: {
+        "Approval": [
+            Event {
+                name: "Approval",
+                inputs: [
+                    EventParam {
+                        name: "owner",
+                        kind: Address,
+                        indexed: true,
+                    },
+                    EventParam {
+                        name: "spender",
+                        kind: Address,
+                        indexed: true,
+                    },
+                    EventParam {
+                        name: "value",
+                        kind: Uint(
+                            256,
+                        ),
+                        indexed: false,
+                    },
+                ],
+                anonymous: false,
+            },
+        ],
+        "Transfer": [
+            Event {
+                name: "Transfer",
+                inputs: [
+                    EventParam {
+                        name: "from",
+                        kind: Address,
+                        indexed: true,
+                    },
+                    EventParam {
+                        name: "to",
+                        kind: Address,
+                        indexed: true,
+                    },
+                    EventParam {
+                        name: "value",
+                        kind: Uint(
+                            256,
+                        ),
+                        indexed: false,
+                    },
+                ],
+                anonymous: false,
+            },
+        ],
+    },
+    errors: {},
+    receive: false,
+    fallback: false,
+}

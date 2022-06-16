@@ -1,16 +1,16 @@
 use ethers::abi::{Address, Token};
-use ethers_providers::Middleware;
-use ethers_solc::resolver::print;
-use ethers_solc::{Artifact, Project, ProjectPathsConfig};
+use ethers_solc::artifacts::output_selection::ContractOutputSelection;
+use ethers_solc::{Artifact, Project, ProjectPathsConfig, SolcConfig};
 use evm::backend::{MemoryAccount, MemoryBackend, MemoryVicinity};
 use evm::executor::stack::{MemoryStackState, StackExecutor, StackSubstateMetadata};
-use evm::{Capture, Config, ExitReason, Handler};
+use evm::{Capture, Config, Context, ExitReason, Handler};
 use eyre::{eyre, ContextCompat, Result};
+use hex::ToHex;
+use maplit::btreemap;
 use primitive_types::{H160, H256, U256};
+use sha3::{Digest, Keccak256};
 use std::collections::BTreeMap;
 use std::path::PathBuf;
-use std::process::ExitCode;
-use std::slice::SliceIndex;
 use std::str::FromStr;
 
 fn simple_run() -> Result<()> {
@@ -18,15 +18,14 @@ fn simple_run() -> Result<()> {
         println!("{}", "=".repeat(80));
     }
 
+    // Two addresses we'll give some ethers to start with
     let owner = H160::from_str("0xf000000000000000000000000000000000000000")?;
     let to = H160::from_str("0x1000000000000000000000000000000000000000")?;
+
     // Target contract to be tested
-    let contract_name = "SimpleToken";
+    let contract_name = "C";
     let get_balance_function_name = Some("balanceOf");
     let state_function_name = "transfer";
-    // let contract_name = "Branching";
-    // let get_balance_function_name: Option<&str> = None;
-    // let state_function_name = "run";
 
     // Arguments in the target function
     let mut fargs: Vec<Token> = Vec::new();
@@ -45,10 +44,14 @@ fn simple_run() -> Result<()> {
         .sources(&root)
         .build()?;
 
+    let solc_config = SolcConfig::builder()
+        .additional_output(ContractOutputSelection::StorageLayout)
+        .build();
+
     let project = Project::builder()
         .paths(paths)
         .set_auto_detect(true) // auto detect solc version from solidity source code
-        .no_artifacts()
+        .solc_config(solc_config)
         .build()?;
 
     let output = project.compile()?;
@@ -60,6 +63,8 @@ fn simple_run() -> Result<()> {
     }
 
     // Print the contracts we found in the project
+    prn();
+    println!("Found contracts in project:");
     for (id, _) in output.clone().into_artifacts() {
         let name = id.name;
         println!("{name}");
@@ -71,30 +76,33 @@ fn simple_run() -> Result<()> {
         .into_bytecode_bytes()
         .context("Missing bytecode")?
         .to_vec();
+    let abi = contract
+        .clone()
+        .into_abi()
+        .context("Missing ABI in contract")?;
 
-    // println!("conctract: {}", hex::encode(&contract_bytecode));
+    prn();
+    // Create bytecode for query balance from ABI and function parameters
     let mut balance_bin = None;
     if let Some(get_balance_function_name) = get_balance_function_name {
         let args: Vec<Token> = vec![Token::Address(owner)];
-        let abi = contract
-            .clone()
-            .into_abi()
-            .context("Missing ABI in contract")?;
         let func = abi
             .functions()
             .find(|ref func| func.name.eq(get_balance_function_name))
             .context("Balance function not found")?;
         let encoded_bin = func.encode_input(&args)?;
 
-        println!("get_balance bin: {}", hex::encode(&encoded_bin));
+        println!("balanceOf(owner) bin: {}", hex::encode(&encoded_bin));
         balance_bin = Some(encoded_bin);
     }
 
-    let abi = contract
-        .clone()
-        .into_abi()
-        .context("Missing ABI in contract")?;
+    let storage_layout = contract.clone().storage_layout;
+    // Unfortunately storage layout is not available for old versions of solidity
+    if let Some(ref layout) = storage_layout {
+        println!("Storage layout: {:?}", layout);
+    }
 
+    prn();
     let fcall = abi
         .functions()
         .find(|ref func| func.name.eq(state_function_name))
@@ -103,50 +111,46 @@ fn simple_run() -> Result<()> {
     // transfering 9999 ERC tokens
     let args = vec![Token::Address(to), Token::Uint(U256::from(9999))];
     let fcall_bin = fcall.encode_input(&args)?;
-    println!("fcall: {fcall:?} {}", hex::encode(&fcall_bin));
-    println!("fcall bytecode: {fcall_bin:?}");
+    println!(
+        "transfer(to, 9999) bin: {fcall:?} {}",
+        hex::encode(&fcall_bin)
+    );
 
-    // Create EVM instance
+    // Configure EVM executor and set initial state
     let config = Config::istanbul();
-
     let vicinity = MemoryVicinity {
-        gas_price: U256::default(),
+        gas_price: U256::zero(),
         origin: H160::default(),
         chain_id: U256::one(),
         block_hashes: Vec::new(),
         block_number: Default::default(),
         block_coinbase: Default::default(),
         block_timestamp: Default::default(),
-        block_difficulty: Default::default(),
-        block_gas_limit: Default::default(),
+        block_difficulty: U256::one(),
+        block_gas_limit: U256::zero(),
         block_base_fee_per_gas: U256::zero(),
     };
 
-    // EVM initial state
-    let mut state = BTreeMap::new();
-    state.insert(
-        to,
-        MemoryAccount {
-            nonce: U256::one(),
-            balance: U256::from(1000000000000u64),
-            storage: BTreeMap::new(),
-            code: Vec::new(), // Put contract code here, this account will own the contract
-        },
-    );
-
-    state.insert(
-        owner,
-        MemoryAccount {
-            nonce: U256::one(),
-            balance: U256::from(10000000000000000u64),
+    // Initial state
+    let initial_state = btreemap! {
+        owner => MemoryAccount {
+            nonce: U256::zero(),
+            balance: U256::from(66_666_666u64),
             storage: BTreeMap::new(),
             code: Vec::new(),
         },
-    );
+        to =>  MemoryAccount {
+            nonce: U256::one(),
+            balance: U256::from(77_777_777u64),
+            storage: BTreeMap::new(),
+            code: Vec::new(), // Put contract code here, this account will own the contract
+        },
+    };
 
-    // Start EVM
-    let backend = MemoryBackend::new(&vicinity, state);
-    let metadata = StackSubstateMetadata::new(u64::MAX, &config);
+    // Create executor
+    let backend = MemoryBackend::new(&vicinity, initial_state);
+    let gas_limit = u64::MAX; // max gas limit allowed in this execution
+    let metadata = StackSubstateMetadata::new(gas_limit, &config);
     let state = MemoryStackState::new(metadata, &backend);
     let precompiles = BTreeMap::new();
     let mut executor = StackExecutor::new_with_precompiles(state, &config, &precompiles);
@@ -170,34 +174,44 @@ fn simple_run() -> Result<()> {
     }
 
     if let Some(ref balance_bin) = balance_bin {
+        let context = Context {
+            address: contract_address,
+            caller: owner,
+            apparent_value: U256::zero(),
+        };
         prn();
+        let gas_start = executor.used_gas();
         println!("EXECUTE get balance method");
+        let reason = executor.call(
+            contract_address,
+            None,
+            balance_bin.clone(),
+            None,
+            true,
+            context,
+        );
+        println!("RETURNS {reason:?} ");
+        if let Capture::Exit((ExitReason::Succeed(_), data)) = reason {
+            let balance = U256::from_big_endian(data.as_slice());
+            println!("Balance: {balance}");
+        }
+        let gas_used = executor.used_gas() - gas_start;
+        println!("Gas used in getting balance transaction {gas_used}");
+    }
+
+    prn();
+    for _ in 0..2 {
+        println!("EXECUTE contract method");
         let reason = executor.transact_call(
             owner,
             contract_address,
             U256::zero(),
-            balance_bin.clone(),
+            fcall_bin.clone(),
             u64::MAX,
             Vec::new(),
         );
         println!("RETURNS {reason:?} ");
-        if let (ExitReason::Succeed(_), data) = reason {
-            let balance = U256::from_big_endian(data.as_slice());
-            println!("Balance: {balance}");
-        }
     }
-
-    prn();
-    println!("EXECUTE contract method");
-    let reason = executor.transact_call(
-        owner,
-        contract_address,
-        U256::zero(),
-        fcall_bin.clone(),
-        u64::MAX,
-        Vec::new(),
-    );
-    println!("RETURNS {reason:?} ");
 
     if let Some(ref balance_bin) = balance_bin {
         prn();
@@ -213,32 +227,78 @@ fn simple_run() -> Result<()> {
         println!("RETURNS {reason:?} ");
         if let (ExitReason::Succeed(_), data) = reason {
             let balance = U256::from_big_endian(data.as_slice());
+            // let balance = hex::encode(&data);
+            println!("Balance: {balance}");
+        }
+    }
+
+    if let Some(ref balance_bin) = balance_bin {
+        prn();
+        println!("EXECUTE get balance method");
+        let reason = executor.transact_call(
+            owner,
+            contract_address,
+            U256::zero(),
+            balance_bin.clone(),
+            u64::MAX,
+            Vec::new(),
+        );
+        println!("RETURNS {reason:?} ");
+        if let (ExitReason::Succeed(_), data) = reason {
+            let balance = U256::from_big_endian(data.as_slice());
+            // let balance = hex::encode(&data);
             println!("Balance: {balance}");
         }
     }
 
     prn();
     let state = executor.state().clone();
-    println!("Complte state: {state:?}");
+    println!("Complete state:\n{state:#?}");
 
-    // prn();
-    // let mut state = executor.state().clone();
-    // This only returns the stack account, which contains no information about the storge data
-    // let contract_account = state.account_mut(contract_address);
-    // println!("Contract state: {:?}", contract_account);
-
-    // prn();
-    // let mut state = executor.state().clone();
-    // let owner_account = state.account_mut(owner);
-    // println!("Account state: {:?}", owner_account);
-
+    // Decode account data
     prn();
-    for i in 0..10 {
-        let contract_storage = executor
-            .storage(contract_address, H256::from_low_u64_be(i))
-            .clone();
-        println!("Contract storage: {:?}", contract_storage);
+    let mut data: Vec<u8> = Vec::new();
+    let slot = 6;
+    let mut key = H256::from(owner.clone()).as_bytes().to_owned().into();
+    let mut position: Vec<u8> = H256::from_low_u64_be(slot).as_bytes().to_owned().into();
+
+    data.append(&mut key);
+    data.append(&mut position);
+    let idx = Keccak256::digest(data.as_slice());
+    let idx = H256::from_slice(idx.as_slice());
+
+    let contract_storage = executor.storage(contract_address, idx).clone();
+    let balance = U256::from(contract_storage.as_bytes());
+    if balance != U256::zero() {
+        println!(
+            "Decoded Contract storage value at slot {} with idx {}: {}",
+            slot,
+            idx.encode_hex::<String>(),
+            balance,
+        );
     }
+
+    // Decode log
+    prn();
+    let (_, logs) = executor.state_mut().clone().deconstruct();
+    println!("Decoded Logs:");
+    for log in logs {
+        println!(
+            "Source {} From {} To {} Amount {}",
+            log.address.encode_hex::<String>(),
+            log.topics[1].encode_hex::<String>(),
+            log.topics[2].encode_hex::<String>(),
+            U256::from_big_endian(&log.data),
+        );
+    }
+
+    // Total gas usage
+    prn();
+    let gas_used = executor.used_gas();
+    println!("Gas used: {}", gas_used);
+
+    println!("Gas left: {}", executor.gas_left());
+
     Ok(())
 }
 

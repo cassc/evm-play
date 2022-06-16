@@ -1,0 +1,60 @@
+{
+ :backend {
+           :vicinity {:chain_id 1
+                      :gas_price 1
+                      :block_hashes []
+                      :block_number 0
+                      :block_coinbase 0x0000000000000000000000000000000000000000
+                      :block_timestamp 0
+                      :block_difficulty 1
+                      :block_gas_limit 1157920892373161954
+                      :block_base_fee_per_gas 0}
+           :state { ;; initial accounts
+                   0x1000000000000000000000000000000000000000 { ;; MemoryAccount
+                                                               :nonce   1
+                                                               :balance 1000000000000
+                                                               :storage {}
+                                                               :code    []}
+                   }
+           :logs []}
+ :substate {:metadata {:gas_limit 23232
+                       :gasometer {
+                                   ;; gas related values
+                                   ;; base_fee etc
+                                   }}
+            :parent nil
+            :logs   [ ;; stores event logs
+                     {;; This event is for Transfer(address indexed from, address indexed to, uint256 value)
+                      :address "0xc15d2ba57d126e6603240e89437efd419ce329d2" ;; address of contract fired the event
+                      :topics  [
+                                ;; length of this vector depends on how many fields we declared as `indexed` when we define the event
+                                0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef, ;; literal hash of `Transfer(address,address,uint256)`
+                                0x000000000000000000000000f000000000000000000000000000000000000000, ;; first indexed field, (H160 address padded with leading zeros)
+                                0x0000000000000000000000001000000000000000000000000000000000000000  ;; second indexed field, (H160 address padded with leading zeros)
+                                ]
+                      :data    ["u8 array"] ;; data (->> rest-of-params (map H256) concat)
+                      }
+                     ]
+            :accounts {
+                       0xc15d2ba57d126e6603240e89437efd419ce329d2 { ;; MemoryStackAccount
+                                                                   :basic {:balance 0
+                                                                           :nonce   1}
+                                                                   :code [
+                                                                          ;; array of u8 for contract code 
+                                                                          ]
+                                                                   :reset false}
+                       0xf000000000000000000000000000000000000000 {
+                                                                   :basic {:blance 10000000000000000
+                                                                           :nonce  7}
+                                                                   :code  nil
+                                                                   :reset false}}
+            :storages {
+                       ;; A map from (address, idx) -> H256
+                       ;; For nested data types, the value can be considered as a `slot` number, to be used for calculate the actual data
+                       [0xc15d2ba57d126e6603240e89437efd419ce329d2 0x0000000000000000000000000000000000000000000000000000000000000000]
+                       0x000000000000000000000000000000000000000000000000000000000001b207
+
+                       [0xc15d2ba57d126e6603240e89437efd419ce329d2 0x0000000000000000000000000000000000000000000000000000000000000001]
+                       0x0000000000000000000000f00000000000000000000000000000000000000000}
+            :deletes {}}
+ }

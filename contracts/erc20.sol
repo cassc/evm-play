@@ -73,9 +73,9 @@ contract ERC20Basic {
 contract BasicToken is ERC20Basic {
   using SafeMath for uint256;
 
-  mapping(address => uint256) balances;
+  mapping(address => uint256) balances;                                 // SLOT 0
 
-  uint256 totalSupply_;
+  uint256 totalSupply_;                                                 // SLOT 1
 
   /**
   * @dev total number of tokens in existence
@@ -140,7 +140,7 @@ contract ERC20 is ERC20Basic {
  */
 contract StandardToken is ERC20, BasicToken {
 
-  mapping (address => mapping (address => uint256)) internal allowed;
+    mapping (address => mapping (address => uint256)) internal allowed; // SLOT 0
 
 
   /**
