@@ -36,7 +36,7 @@ contract B {
 }
 
 contract C is
-B,                                     // takes 8 slots
+B,                                     // takes 6 slots
     StandardToken                      // takens 3 slots
 {
                                        // all slot numbers below should be added by 8+3 first

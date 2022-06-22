@@ -71,6 +71,12 @@ fn simple_run() -> Result<()> {
     }
 
     let contract = output.find(contract_name).context("Contract not found")?;
+    let contract_deploy_hex: String = contract
+        .clone()
+        .into_bytecode_bytes()
+        .context("Missing bytecode")?
+        .encode_hex_upper();
+    println!("Contract deploy hex:\n{}", contract_deploy_hex);
     let contract_bytecode = contract
         .clone()
         .into_bytecode_bytes()
