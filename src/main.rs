@@ -86,6 +86,15 @@ fn simple_run() -> Result<()> {
         .clone()
         .into_abi()
         .context("Missing ABI in contract")?;
+    let deployed_hex: String = contract
+        .clone()
+        .deployed_bytecode
+        .context("Missing deployed bytecode")?
+        .bytecode
+        .context("Missing deployed bytecode bytes")?
+        .object
+        .encode_hex();
+    println!("Contract deployed bytecode as hex:\n{}", deployed_hex);
 
     prn();
     // Create bytecode for query balance from ABI and function parameters
